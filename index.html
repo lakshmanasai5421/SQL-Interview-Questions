@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SQL Interview Questions – 100+ Scenarios | DevAnalytiq</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #050811;
+  --surface: #080d1a;
+  --card: #0d1424;
+  --card-hover: #111b30;
+  --border: #162040;
+  --border-bright: #1e2f55;
+  --accent1: #38bdf8;
+  --accent2: #818cf8;
+  --accent3: #fb923c;
+  --accent4: #34d399;
+  --accent5: #fb7185;
+  --accent6: #a78bfa;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --muted2: #8899bb;
+  --code-bg: #030712;
+  --glow1: rgba(56,189,248,0.15);
+  --glow2: rgba(129,140,248,0.12);
+  --glow3: rgba(167,139,250,0.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ─── ANIMATED BACKGROUND ─── */
+.bg-canvas {
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.bg-canvas::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 90% 70% at 15% 0%, rgba(56,189,248,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 85% 10%, rgba(129,140,248,0.1) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(167,139,250,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 5% 60%, rgba(52,211,153,0.06) 0%, transparent 45%),
+    radial-gradient(ellipse 50% 40% at 95% 70%, rgba(251,113,133,0.06) 0%, transparent 45%);
+  animation: bgPulse 12s ease-in-out infinite alternate;
+}
+@keyframes bgPulse {
+  0%   { opacity:.7; transform:scale(1); }
+  100% { opacity:1;  transform:scale(1.04); }
+}
+.bg-canvas::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%);
+}
+
+/* Floating orbs */
+.orb {
+  position:fixed;
+  border-radius:50%;
+  filter:blur(80px);
+  pointer-events:none;
+  z-index:0;
+  animation: orbFloat linear infinite;
+}
+.orb1 { width:500px;height:500px;background:rgba(56,189,248,0.06);top:-150px;left:-100px;animation-duration:25s; }
+.orb2 { width:400px;height:400px;background:rgba(129,140,248,0.07);top:30%;right:-100px;animation-duration:30s;animation-delay:-10s; }
+.orb3 { width:350px;height:350px;background:rgba(167,139,250,0.05);bottom:10%;left:20%;animation-duration:20s;animation-delay:-5s; }
+@keyframes orbFloat {
+  0%,100% { transform:translateY(0) scale(1); }
+  33%      { transform:translateY(-40px) scale(1.05); }
+  66%      { transform:translateY(20px) scale(0.96); }
+}
+
+/* noise grain overlay */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:1;
+  opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* all content above bg */
+.hero,.stats-bar,.setup-section,.filter-bar,.result-count,.cards-grid,footer {
+  position:relative;
+  z-index:2;
+}
+
+/* ─── HERO ─── */
+.hero{text-align:center;padding:80px 24px 52px;overflow:hidden}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(56,189,248,0.08);
+  border:1px solid rgba(56,189,248,0.25);
+  color:var(--accent1);
+  font-family:'JetBrains Mono',sans-serif;
+  font-size:.72rem;letter-spacing:.14em;
+  padding:7px 18px;border-radius:100px;margin-bottom:24px;
+  animation:fadeDown .6s ease both;
+  box-shadow:0 0 20px rgba(56,189,248,0.1);
+}
+.hero-tag::before{content:'⚡'}
+.hero h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2.2rem,6vw,4.2rem);
+  font-weight:800;line-height:1.05;letter-spacing:-.03em;
+  animation:fadeDown .7s .1s ease both;
+}
+.hero h1 .line1{display:block;color:var(--text)}
+.hero h1 .grad{
+  display:block;
+  background:linear-gradient(135deg,var(--accent1) 0%,var(--accent6) 50%,var(--accent5) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero p{
+  margin:18px auto 0;color:var(--muted2);
+  font-size:1rem;max-width:600px;line-height:1.7;
+  animation:fadeDown .7s .2s ease both;
+}
+.hero-divider{
+  width:80px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent1),transparent);
+  margin:28px auto 0;
+  animation:fadeDown .7s .3s ease both;
+}
+
+/* STATS BAR */
+.stats-bar{
+  display:flex;justify-content:center;gap:0;flex-wrap:wrap;
+  padding:32px 24px 0;animation:fadeDown .7s .35s ease both;
+  max-width:700px;margin-left:auto;margin-right:auto;
+}
+.stat{
+  text-align:center;padding:16px 36px;
+  border-right:1px solid var(--border);
+}
+.stat:last-child{border-right:none}
+.stat-num{
+  font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;
+  background:linear-gradient(135deg,var(--accent1),var(--accent6));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.stat-label{font-size:.7rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+@media(max-width:500px){.stat{padding:12px 20px}}
+
+/* ─── SETUP SECTION ─── */
+.setup-section{max-width:1120px;margin:56px auto 0;padding:0 24px}
+.section-title{
+  font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--accent3);
+  margin-bottom:24px;display:flex;align-items:center;gap:14px;
+}
+.section-title::before,.section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+.section-title::after{background:linear-gradient(270deg,var(--border),transparent)}
+
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.setup-grid{grid-template-columns:1fr}}
+
+.code-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;
+  box-shadow:0 4px 32px rgba(0,0,0,.4);
+  transition:border-color .3s,box-shadow .3s;
+}
+.code-card:hover{
+  border-color:var(--border-bright);
+  box-shadow:0 8px 48px rgba(0,0,0,.6),0 0 0 1px rgba(56,189,248,.05);
+}
+.code-card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 18px;
+  background:rgba(255,255,255,.02);
+  border-bottom:1px solid var(--border);
+}
+.code-card-title{font-family:'sans-serif',sans-serif;font-size:.78rem;color:var(--accent1);letter-spacing:.04em}
+.dots{display:flex;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot:nth-child(1){background:#ff5f57}
+.dot:nth-child(2){background:#febc2e}
+.dot:nth-child(3){background:#28c840}
+.code-card pre{
+  padding:18px;overflow-x:auto;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.76rem;line-height:1.75;color:#c9d8f0;
+}
+.copy-btn{
+  background:rgba(56,189,248,.08);
+  border:1px solid rgba(56,189,248,.2);
+  color:var(--accent1);
+  font-family:'JetBrains Mono',sans-serif;
+  font-size:.68rem;letter-spacing:.04em;
+  padding:5px 14px;border-radius:8px;cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;gap:5px;
+}
+.copy-btn:hover{background:rgba(56,189,248,.18);border-color:rgba(56,189,248,.4);box-shadow:0 0 12px rgba(56,189,248,.15)}
+.copy-btn svg{width:12px;height:12px;flex-shrink:0}
+
+/* syntax */
+.kw{color:#7dd3fc}
+.fn{color:#a5b4fc}
+.str{color:#86efac}
+.cm{color:#475569;font-style:sans-serif}
+.tbl{color:#c4b5fd}
+.num{color:#fbbf24}
+
+/* ─── FILTER BAR ─── */
+.filter-bar{
+  max-width:1200px;margin:56px auto 0;padding:0 24px;
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+}
+.filter-label{font-size:.82rem;color:var(--muted);margin-right:4px;font-style:italic}
+.filter-btn{
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--border);
+  color:var(--muted2);
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;padding:7px 16px;
+  border-radius:100px;cursor:pointer;
+  transition:all .25s;letter-spacing:.04em;
+}
+.filter-btn:hover{border-color:var(--accent2);color:var(--accent2);background:rgba(129,140,248,.06)}
+.filter-btn.active{
+  background:linear-gradient(135deg,rgba(56,189,248,.15),rgba(129,140,248,.15));
+  border-color:var(--accent1);color:var(--accent1);
+  box-shadow:0 0 16px rgba(56,189,248,.1);
+}
+.search-box{
+  margin-left:auto;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--border);
+  border-radius:100px;padding:7px 18px 7px 14px;
+  display:flex;align-items:center;gap:8px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.search-box:focus-within{border-color:var(--accent1);box-shadow:0 0 16px rgba(56,189,248,.1)}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.78rem;width:190px}
+.search-box input::placeholder{color:var(--muted)}
+.search-icon{color:var(--muted);font-size:.85rem}
+@media(max-width:600px){.search-box{margin-left:0;width:100%}.search-box input{width:100%}}
+
+/* ─── CARDS GRID ─── */
+.cards-grid{
+  max-width:1200px;margin:28px auto 0;padding:0 24px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:20px;
+}
+
+.q-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  box-shadow:0 2px 16px rgba(0,0,0,.3);
+  overflow:hidden;
+  transition:transform .28s cubic-bezier(.2,.8,.4,1),box-shadow .28s,border-color .28s,background .28s;
+  animation:cardIn .45s ease both;
+  position:relative;
+}
+.q-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 40% at 50% 0%, var(--card-glow,rgba(56,189,248,.04)) 0%, transparent 60%);
+  pointer-events:none;
+  opacity:0;transition:opacity .3s;
+}
+.q-card:hover{
+  transform:translateY(-5px) scale(1.005);
+  box-shadow:0 24px 56px rgba(0,0,0,.55),0 0 0 1px var(--card-accent,var(--accent1)),0 0 40px var(--card-glow,rgba(56,189,248,.07));
+  border-color:var(--card-accent,var(--accent1));
+  background:var(--card-hover);
+}
+.q-card:hover::before{opacity:1}
+
+.q-card-header{padding:16px 18px 12px;display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--border)}
+.q-num{
+  font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;
+  color:var(--card-accent,var(--accent1));line-height:1;min-width:38px;
+  text-shadow:0 0 20px var(--card-accent,rgba(56,189,248,.4));
+}
+.q-info{flex:1;min-width:0}
+.q-title{font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;line-height:1.35;color:var(--text)}
+.q-tag{
+  display:inline-block;margin-top:6px;
+  font-size:.62rem;font-family:'JetBrains Mono',monospace;
+  letter-spacing:.08em;padding:3px 10px;border-radius:100px;
+  background:rgba(255,255,255,.04);color:var(--muted);
+}
+
+.q-desc{padding:12px 18px 0;font-size:.8rem;color:var(--muted2);line-height:1.65}
+
+/* CODE BLOCK inside card */
+.q-code{
+  margin:10px 10px 0;
+  background:var(--code-bg);
+  border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;
+  position:relative;
+}
+.q-code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 10px;
+  background:rgba(255,255,255,.015);
+  border-bottom:1px solid var(--border);
+}
+.q-code-lang{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.06em}
+.q-copy-btn{
+  background:rgba(56,189,248,.07);
+  border:1px solid rgba(56,189,248,.18);
+  color:var(--accent1);
+  font-family:'JetBrains Mono',monospace;
+  font-size:.62rem;letter-spacing:.04em;
+  padding:3px 10px;border-radius:6px;cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;gap:4px;
+  flex-shrink:0;
+}
+.q-copy-btn:hover{background:rgba(56,189,248,.16);border-color:rgba(56,189,248,.4)}
+.q-copy-btn svg{width:10px;height:10px}
+.q-code pre{
+  padding:10px 14px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.71rem;line-height:1.65;
+  overflow-x:auto;color:#c9d8f0;
+  max-height:190px;
+}
+
+.q-card-footer{
+  padding:10px 18px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:8px;
+}
+.complexity{font-size:.63rem;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;padding:3px 10px;border-radius:100px}
+.easy{background:rgba(52,211,153,.12);color:var(--accent4);border:1px solid rgba(52,211,153,.22)}
+.medium{background:rgba(251,146,60,.1);color:var(--accent3);border:1px solid rgba(251,146,60,.2)}
+.hard{background:rgba(251,113,133,.1);color:var(--accent5);border:1px solid rgba(251,113,133,.2)}
+.concepts{font-size:.66rem;color:var(--muted);font-family:'JetBrains Mono',monospace;text-align:right;max-width:55%}
+
+.q-card.hidden{display:none}
+
+/* ─── RESULT COUNT ─── */
+.result-count{
+  max-width:1200px;margin:0 auto;padding:0 24px;
+  font-style:italic;font-size:.82rem;color:var(--muted);
+}
+
+/* ─── FOOTER ─── */
+footer{
+  position:relative;z-index:2;
+  text-align:center;padding:40px 24px 32px;
+  color:var(--muted);font-size:.82rem;
+  border-top:1px solid var(--border);
+  margin-top:60px;
+  background:linear-gradient(to bottom, transparent, rgba(5,8,17,.8));
+}
+.footer-logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;
+  background:linear-gradient(135deg,var(--accent1),var(--accent6));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:8px;
+}
+.footer-copy{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.04em}
+.footer-copy span{color:var(--accent1)}
+.footer-tagline{color:var(--muted);font-size:.75rem;margin-top:6px}
+.footer-divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--border-bright),transparent);margin:16px auto}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── TOAST ─── */
+.toast{
+  position:fixed;bottom:28px;right:28px;
+  background:linear-gradient(135deg,var(--accent4),#059669);
+  color:#fff;padding:11px 22px;border-radius:12px;
+  font-family:'JetBrains Mono',monospace;font-size:.78rem;
+  opacity:0;transform:translateY(12px);transition:all .3s;
+  pointer-events:none;z-index:999;
+  box-shadow:0 8px 32px rgba(52,211,153,.3);
+  display:flex;align-items:center;gap:6px;
+}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border-bright);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND -->
+<div class="bg-canvas"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">SQL MASTERY GUIDE · DEVANALYTIQ</div>
+  <h1>
+    <span class="line1">SQL Interview</span>
+    <span class="grad">Scenario Questions</span>
+  </h1>
+  <p>100+ real-world SQL scenarios covering JOINs, Window Functions, CTEs, Aggregations, and more — with full working code and setup scripts.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">100+</div><div class="stat-label">Questions</div></div>
+  <div class="stat"><div class="stat-num">9</div><div class="stat-label">Categories</div></div>
+  <div class="stat"><div class="stat-num">7</div><div class="stat-label">DB Tables</div></div>
+  <div class="stat"><div class="stat-num">100+</div><div class="stat-label">Sample Rows</div></div>
+</div>
+
+<!-- DB SETUP -->
+<div class="setup-section">
+  <div class="section-title">Database Setup</div>
+  <div class="setup-grid">
+    <div class="code-card">
+      <div class="code-card-header">
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="code-card-title">📄 create_tables.sql</div>
+        <button class="copy-btn" onclick="copySetup('create-tables',this)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M2 11V3a1 1 0 011-1h8"/></svg>Copy
+        </button>
+      </div>
+      <pre id="create-tables"><span class="cm">-- ══════════════════════════════════
+-- CREATE DATABASE TABLES
+-- ══════════════════════════════════</span>
+
+<span class="cm">-- 1. Employee Table</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">Employee</span> (
+  employee_id   <span class="fn">INT</span>          <span class="kw">PRIMARY KEY</span>,
+  name          <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+  department_id <span class="fn">INT</span>,
+  salary        <span class="fn">DECIMAL</span>(<span class="num">10,2</span>),
+  hire_date     <span class="fn">DATE</span>
+);
+
+<span class="cm">-- 2. Department Table</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">Department</span> (
+  department_id <span class="fn">INT</span>          <span class="kw">PRIMARY KEY</span>,
+  dept_name     <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+  location      <span class="fn">VARCHAR</span>(<span class="num">100</span>)
+);
+
+<span class="cm">-- 3. Orders Table</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">Orders</span> (
+  order_id      <span class="fn">INT</span>          <span class="kw">PRIMARY KEY</span>,
+  customer_id   <span class="fn">INT</span>          <span class="kw">NOT NULL</span>,
+  order_date    <span class="fn">DATE</span>         <span class="kw">NOT NULL</span>,
+  total_amount  <span class="fn">DECIMAL</span>(<span class="num">10,2</span>),
+  region        <span class="fn">VARCHAR</span>(<span class="num">50</span>)
+);
+
+<span class="cm">-- 4. Products Table</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">Products</span> (
+  product_id    <span class="fn">INT</span>          <span class="kw">PRIMARY KEY</span>,
+  product_name  <span class="fn">VARCHAR</span>(<span class="num">150</span>),
+  category      <span class="fn">VARCHAR</span>(<span class="num">80</span>),
+  price         <span class="fn">DECIMAL</span>(<span class="num">10,2</span>)
+);
+
+<span class="cm">-- 5. Sales Table</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">Sales</span> (
+  sale_id       <span class="fn">INT</span>          <span class="kw">PRIMARY KEY</span>,
+  product_id    <span class="fn">INT</span>          <span class="kw">REFERENCES</span> <span class="tbl">Products</span>(product_id),
+  quantity      <span class="fn">INT</span>          <span class="kw">NOT NULL</span>,
+  sale_date     <span class="fn">DATE</span>,
+  price         <span class="fn">DECIMAL</span>(<span class="num">10,2</span>)
+);
+
+<span class="cm">-- 6. Customers Table</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">Customers</span> (
+  customer_id   <span class="fn">INT</span>          <span class="kw">PRIMARY KEY</span>,
+  name          <span class="fn">VARCHAR</span>(<span class="num">100</span>),
+  email         <span class="fn">VARCHAR</span>(<span class="num">150</span>),
+  city          <span class="fn">VARCHAR</span>(<span class="num">80</span>),
+  joined_date   <span class="fn">DATE</span>
+);
+
+<span class="cm">-- 7. Returns Table</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">Returns</span> (
+  return_id     <span class="fn">INT</span>          <span class="kw">PRIMARY KEY</span>,
+  order_id      <span class="fn">INT</span>          <span class="kw">REFERENCES</span> <span class="tbl">Orders</span>(order_id),
+  customer_id   <span class="fn">INT</span>,
+  return_date   <span class="fn">DATE</span>,
+  reason        <span class="fn">VARCHAR</span>(<span class="num">255</span>)
+);</pre>
+    </div>
+
+    <div class="code-card">
+      <div class="code-card-header">
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="code-card-title">📥 insert_data.sql</div>
+        <button class="copy-btn" onclick="copySetup('insert-data',this)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M2 11V3a1 1 0 011-1h8"/></svg>Copy
+        </button>
+      </div>
+      <pre id="insert-data"><span class="cm">-- ══════════════════════════════════
+-- INSERT SAMPLE DATA
+-- ══════════════════════════════════</span>
+
+<span class="cm">-- Departments</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">Department</span> <span class="kw">VALUES</span>
+(<span class="num">1</span>, <span class="str">'Engineering'</span>,  <span class="str">'New York'</span>),
+(<span class="num">2</span>, <span class="str">'Marketing'</span>,    <span class="str">'Los Angeles'</span>),
+(<span class="num">3</span>, <span class="str">'Finance'</span>,      <span class="str">'Chicago'</span>),
+(<span class="num">4</span>, <span class="str">'HR'</span>,           <span class="str">'Boston'</span>),
+(<span class="num">5</span>, <span class="str">'Operations'</span>,   <span class="str">'Seattle'</span>);
+
+<span class="cm">-- Employees</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">Employee</span> <span class="kw">VALUES</span>
+(<span class="num">1</span>,  <span class="str">'Alice Johnson'</span>,   <span class="num">1</span>, <span class="num">95000</span>, <span class="str">'2022-03-15'</span>),
+(<span class="num">2</span>,  <span class="str">'Bob Smith'</span>,       <span class="num">1</span>, <span class="num">88000</span>, <span class="str">'2023-01-10'</span>),
+(<span class="num">3</span>,  <span class="str">'Carol White'</span>,     <span class="num">2</span>, <span class="num">72000</span>, <span class="str">'2021-07-20'</span>),
+(<span class="num">4</span>,  <span class="str">'David Brown'</span>,     <span class="num">2</span>, <span class="num">67000</span>, <span class="str">'2023-04-01'</span>),
+(<span class="num">5</span>,  <span class="str">'Eve Davis'</span>,       <span class="num">3</span>, <span class="num">115000</span>,<span class="str">'2020-11-05'</span>),
+(<span class="num">6</span>,  <span class="str">'Frank Wilson'</span>,    <span class="num">3</span>, <span class="num">99000</span>, <span class="str">'2022-06-18'</span>),
+(<span class="num">7</span>,  <span class="str">'Grace Lee'</span>,       <span class="num">4</span>, <span class="num">54000</span>, <span class="str">'2023-08-22'</span>),
+(<span class="num">8</span>,  <span class="str">'Henry Martinez'</span>,  <span class="num">5</span>, <span class="num">61000</span>, <span class="str">'2021-02-14'</span>),
+(<span class="num">9</span>,  <span class="str">'Iris Clark'</span>,      <span class="num">1</span>, <span class="num">102000</span>,<span class="str">'2019-09-30'</span>),
+(<span class="num">10</span>, <span class="str">'Jack Robinson'</span>,   <span class="kw">NULL</span>,<span class="num">45000</span>,<span class="str">'2023-11-01'</span>);
+
+<span class="cm">-- Products</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">Products</span> <span class="kw">VALUES</span>
+(<span class="num">1</span>, <span class="str">'Laptop Pro'</span>,     <span class="str">'Electronics'</span>, <span class="num">1299.99</span>),
+(<span class="num">2</span>, <span class="str">'Wireless Mouse'</span>, <span class="str">'Accessories'</span>, <span class="num">29.99</span>),
+(<span class="num">3</span>, <span class="str">'USB-C Hub'</span>,      <span class="str">'Accessories'</span>, <span class="num">49.99</span>),
+(<span class="num">4</span>, <span class="str">'Monitor 4K'</span>,     <span class="str">'Electronics'</span>, <span class="num">599.99</span>),
+(<span class="num">5</span>, <span class="str">'Keyboard Mech'</span>,  <span class="str">'Accessories'</span>, <span class="num">149.99</span>),
+(<span class="num">6</span>, <span class="str">'Webcam HD'</span>,      <span class="str">'Electronics'</span>, <span class="num">89.99</span>),
+(<span class="num">7</span>, <span class="str">'Desk Lamp'</span>,      <span class="str">'Office'</span>,      <span class="num">39.99</span>),
+(<span class="num">8</span>, <span class="str">'Chair Ergonomic'</span>,<span class="str">'Office'</span>,      <span class="num">349.99</span>);
+
+<span class="cm">-- Orders (2023-2024)</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">Orders</span> <span class="kw">VALUES</span>
+(<span class="num">1</span>,  <span class="num">101</span>, <span class="str">'2023-01-12'</span>, <span class="num">250.00</span>, <span class="str">'North'</span>),
+(<span class="num">2</span>,  <span class="num">102</span>, <span class="str">'2023-02-20'</span>, <span class="num">480.50</span>, <span class="str">'South'</span>),
+(<span class="num">3</span>,  <span class="num">101</span>, <span class="str">'2023-03-05'</span>, <span class="num">120.00</span>, <span class="str">'North'</span>),
+(<span class="num">4</span>,  <span class="num">103</span>, <span class="str">'2023-04-15'</span>, <span class="num">990.00</span>, <span class="str">'East'</span>),
+(<span class="num">5</span>,  <span class="num">104</span>, <span class="str">'2023-05-22'</span>, <span class="num">310.75</span>, <span class="str">'West'</span>),
+(<span class="num">6</span>,  <span class="num">102</span>, <span class="str">'2023-06-10'</span>, <span class="num">55.00</span>,  <span class="str">'South'</span>),
+(<span class="num">7</span>,  <span class="num">105</span>, <span class="str">'2023-07-18'</span>, <span class="num">740.20</span>, <span class="str">'North'</span>),
+(<span class="num">8</span>,  <span class="num">101</span>, <span class="str">'2023-08-30'</span>, <span class="num">195.00</span>, <span class="str">'North'</span>),
+(<span class="num">9</span>,  <span class="num">106</span>, <span class="str">'2023-09-14'</span>, <span class="num">620.00</span>, <span class="str">'East'</span>),
+(<span class="num">10</span>, <span class="num">103</span>, <span class="str">'2023-10-05'</span>, <span class="num">430.00</span>, <span class="str">'East'</span>);
+
+<span class="cm">-- Sales</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">Sales</span> <span class="kw">VALUES</span>
+(<span class="num">1</span>, <span class="num">1</span>, <span class="num">5</span>,  <span class="str">'2023-01-10'</span>, <span class="num">1299.99</span>),
+(<span class="num">2</span>, <span class="num">2</span>, <span class="num">20</span>, <span class="str">'2023-01-15'</span>, <span class="num">29.99</span>),
+(<span class="num">3</span>, <span class="num">3</span>, <span class="num">12</span>, <span class="str">'2023-02-05'</span>, <span class="num">49.99</span>),
+(<span class="num">4</span>, <span class="num">4</span>, <span class="num">3</span>,  <span class="str">'2023-03-20'</span>, <span class="num">599.99</span>),
+(<span class="num">5</span>, <span class="num">5</span>, <span class="num">8</span>,  <span class="str">'2023-04-11'</span>, <span class="num">149.99</span>),
+(<span class="num">6</span>, <span class="num">1</span>, <span class="num">2</span>,  <span class="str">'2023-05-22'</span>, <span class="num">1299.99</span>),
+(<span class="num">7</span>, <span class="num">6</span>, <span class="num">15</span>, <span class="str">'2023-06-01'</span>, <span class="num">89.99</span>),
+(<span class="num">8</span>, <span class="num">7</span>, <span class="num">30</span>, <span class="str">'2023-07-14'</span>, <span class="num">39.99</span>);</pre>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <span class="filter-label">Category:</span>
+  <button class="filter-btn active" onclick="filterCards('all',this)">All (100+)</button>
+  <button class="filter-btn" onclick="filterCards('basics',this)">Basics</button>
+  <button class="filter-btn" onclick="filterCards('joins',this)">JOINs</button>
+  <button class="filter-btn" onclick="filterCards('aggregation',this)">Aggregation</button>
+  <button class="filter-btn" onclick="filterCards('window',this)">Window Fns</button>
+  <button class="filter-btn" onclick="filterCards('cte',this)">CTEs</button>
+  <button class="filter-btn" onclick="filterCards('advanced',this)">Advanced</button>
+  <button class="filter-btn" onclick="filterCards('subquery',this)">Subqueries</button>
+  <button class="filter-btn" onclick="filterCards('string',this)">String Fns</button>
+  <button class="filter-btn" onclick="filterCards('date',this)">Date Fns</button>
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search questions..." oninput="searchCards()"/>
+  </div>
+</div>
+<div class="result-count" id="resultCount" style="margin-top:14px"></div>
+
+<!-- CARDS GRID -->
+<div class="cards-grid" id="cardsGrid"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DevAnalytiq</div>
+  <div class="footer-divider"></div>
+  <div class="footer-copy">© <span id="footerYear"></span> <span>DevAnalytiq</span>. All Rights Reserved.</div>
+  <div class="footer-tagline">Built for SQL interview prep · 100+ scenarios covering real-world database challenges</div>
+</footer>
+
+<div class="toast" id="toast">
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,8 6,12 14,4"/></svg>
+  Copied to clipboard!
+</div>
+
+<script>
+/* ── Dynamic footer year ── */
+document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+/* ── Copy icon SVG ── */
+const COPY_SVG = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M2 11V3a1 1 0 011-1h8"/></svg>`;
+const CHECK_SVG = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,8 6,12 14,4"/></svg>`;
+
+const ACCENT_MAP = {
+  basics:'#38bdf8', joins:'#34d399', aggregation:'#fb923c',
+  window:'#a78bfa', cte:'#818cf8', advanced:'#fb7185',
+  subquery:'#f97316', string:'#06b6d4', date:'#84cc16'
+};
+const GLOW_MAP = {
+  basics:'rgba(56,189,248,.06)', joins:'rgba(52,211,153,.06)',
+  aggregation:'rgba(251,146,60,.06)', window:'rgba(167,139,250,.06)',
+  cte:'rgba(129,140,248,.06)', advanced:'rgba(251,113,133,.06)',
+  subquery:'rgba(249,115,22,.06)', string:'rgba(6,182,212,.06)',
+  date:'rgba(132,204,22,.06)'
+};
+
+const questions = [
+  {num:1,title:"Find Duplicate Records in a Table",category:"basics",complexity:"easy",concepts:"GROUP BY · HAVING",desc:"Identify rows where a combination of columns appears more than once — essential for data quality audits.",sql:`SELECT column1, column2, COUNT(*)\nFROM your_table\nGROUP BY column1, column2\nHAVING COUNT(*) > 1;`},
+  {num:2,title:"Retrieve the Second Highest Salary",category:"basics",complexity:"medium",concepts:"Subquery · MAX",desc:"Find the second highest salary using a subquery that excludes the maximum value.",sql:`SELECT MAX(salary) AS SecondHighestSalary\nFROM Employee\nWHERE salary < (SELECT MAX(salary) FROM Employee);`},
+  {num:3,title:"Find Employees Without Department",category:"joins",complexity:"easy",concepts:"LEFT JOIN · IS NULL",desc:"Use a LEFT JOIN to find employees not assigned to any department — classic NULL detection pattern.",sql:`SELECT e.*\nFROM Employee e\nLEFT JOIN Department d\n  ON e.department_id = d.department_id\nWHERE d.department_id IS NULL;`},
+  {num:4,title:"Calculate Total Revenue Per Product",category:"aggregation",complexity:"easy",concepts:"SUM · GROUP BY",desc:"Aggregate sales data to compute total revenue for each product using SUM and GROUP BY.",sql:`SELECT product_id,\n  SUM(quantity * price) AS total_revenue\nFROM Sales\nGROUP BY product_id;`},
+  {num:5,title:"Top 3 Highest-Paid Employees",category:"basics",complexity:"easy",concepts:"ORDER BY · LIMIT",desc:"Retrieve the top N records using ORDER BY with DESC and LIMIT — a very common interview starter.",sql:`SELECT *\nFROM Employee\nORDER BY salary DESC\nLIMIT 3;`},
+  {num:6,title:"Customers Who Purchased but Never Returned",category:"joins",complexity:"medium",concepts:"NOT IN · Subquery",desc:"Find loyal customers who placed orders but never returned any product using NOT IN with a subquery.",sql:`SELECT DISTINCT c.customer_id\nFROM Customers c\nJOIN Orders o ON c.customer_id = o.customer_id\nWHERE c.customer_id NOT IN (\n  SELECT customer_id FROM Returns\n);`},
+  {num:7,title:"Count Orders Per Customer",category:"aggregation",complexity:"easy",concepts:"COUNT · GROUP BY",desc:"Summarize order activity per customer — foundational aggregation query.",sql:`SELECT customer_id,\n  COUNT(*) AS order_count\nFROM Orders\nGROUP BY customer_id;`},
+  {num:8,title:"Employees Joined in 2023",category:"basics",complexity:"easy",concepts:"EXTRACT · WHERE",desc:"Filter employees by hire year using EXTRACT(YEAR FROM ...) — a date function used in most DBs.",sql:`SELECT *\nFROM Employee\nWHERE EXTRACT(YEAR FROM hire_date) = 2023;`},
+  {num:9,title:"Average Order Value Per Customer",category:"aggregation",complexity:"easy",concepts:"AVG · GROUP BY",desc:"Compute average spend per customer — key metric for customer segmentation.",sql:`SELECT customer_id,\n  AVG(total_amount) AS avg_order_value\nFROM Orders\nGROUP BY customer_id;`},
+  {num:10,title:"Latest Order by Each Customer",category:"aggregation",complexity:"easy",concepts:"MAX · GROUP BY",desc:"Find the most recent order date per customer using MAX on a date column.",sql:`SELECT customer_id,\n  MAX(order_date) AS latest_order_date\nFROM Orders\nGROUP BY customer_id;`},
+  {num:11,title:"Products Never Sold",category:"joins",complexity:"medium",concepts:"LEFT JOIN · IS NULL",desc:"Identify products with zero sales using a LEFT JOIN from Products to Sales checking for NULL matches.",sql:`SELECT p.product_id\nFROM Products p\nLEFT JOIN Sales s ON p.product_id = s.product_id\nWHERE s.product_id IS NULL;`},
+  {num:12,title:"Most Selling Product",category:"aggregation",complexity:"easy",concepts:"SUM · ORDER BY · LIMIT",desc:"Find the top-selling product by total quantity sold — combines aggregation with sorting.",sql:`SELECT product_id,\n  SUM(quantity) AS total_qty\nFROM Sales\nGROUP BY product_id\nORDER BY total_qty DESC\nLIMIT 1;`},
+  {num:13,title:"Total Revenue & Orders Per Region",category:"aggregation",complexity:"easy",concepts:"SUM · COUNT · GROUP BY",desc:"Multi-metric aggregation: compute both revenue and order count grouped by sales region.",sql:`SELECT region,\n  SUM(total_amount) AS total_revenue,\n  COUNT(*) AS order_count\nFROM Orders\nGROUP BY region;`},
+  {num:14,title:"Customers with More Than 5 Orders",category:"aggregation",complexity:"easy",concepts:"HAVING · COUNT · Subquery",desc:"Filter aggregated results using HAVING — find high-frequency buyers with more than 5 orders.",sql:`SELECT COUNT(*) AS customer_count\nFROM (\n  SELECT customer_id\n  FROM Orders\n  GROUP BY customer_id\n  HAVING COUNT(*) > 5\n) AS subquery;`},
+  {num:15,title:"Customers with Orders Above Average Value",category:"basics",complexity:"medium",concepts:"Subquery · AVG",desc:"Use a scalar subquery in WHERE to compare each order against the overall average total.",sql:`SELECT DISTINCT customer_id\nFROM Orders\nWHERE total_amount > (\n  SELECT AVG(total_amount) FROM Orders\n);`},
+  {num:16,title:"Employees Hired on Weekends",category:"basics",complexity:"medium",concepts:"EXTRACT · DOW · IN",desc:"Use EXTRACT(DOW ...) where 0=Sunday and 6=Saturday to find weekend hire dates.",sql:`SELECT *\nFROM Employee\nWHERE EXTRACT(DOW FROM hire_date) IN (0, 6);`},
+  {num:17,title:"Employees with Salary Between 50K–100K",category:"basics",complexity:"easy",concepts:"BETWEEN",desc:"BETWEEN is inclusive on both ends — an easy but commonly tested filtering clause.",sql:`SELECT *\nFROM Employee\nWHERE salary BETWEEN 50000 AND 100000;`},
+  {num:18,title:"Monthly Sales Revenue & Order Count",category:"aggregation",complexity:"medium",concepts:"TO_CHAR · GROUP BY date",desc:"Aggregate orders by month using TO_CHAR to format dates — useful for time-series reports.",sql:`SELECT TO_CHAR(order_date, 'YYYY-MM') AS month,\n  SUM(total_amount) AS total_revenue,\n  COUNT(order_id) AS order_count\nFROM Orders\nGROUP BY TO_CHAR(order_date, 'YYYY-MM');`},
+  {num:19,title:"Rank Employees by Salary Within Department",category:"window",complexity:"medium",concepts:"RANK() · PARTITION BY",desc:"Use RANK() window function with PARTITION BY department to rank salaries within each group.",sql:`SELECT employee_id, department_id, salary,\n  RANK() OVER (\n    PARTITION BY department_id\n    ORDER BY salary DESC\n  ) AS salary_rk\nFROM Employee;`},
+  {num:20,title:"Customers Who Ordered Every Month in 2023",category:"aggregation",complexity:"hard",concepts:"COUNT DISTINCT · HAVING",desc:"Find customers active in all 12 months of 2023 using DISTINCT month count equals 12.",sql:`SELECT customer_id\nFROM Orders\nWHERE EXTRACT(YEAR FROM order_date) = 2023\nGROUP BY customer_id\nHAVING COUNT(\n  DISTINCT TO_CHAR(order_date,'YYYY-MM')\n) = 12;`},
+  {num:21,title:"Moving Average of Sales (Last 3 Days)",category:"window",complexity:"hard",concepts:"AVG() OVER · ROWS BETWEEN",desc:"Compute a 3-day moving average using AVG() window function with a ROWS BETWEEN frame clause.",sql:`SELECT order_date,\n  AVG(total_amount) OVER (\n    ORDER BY order_date\n    ROWS BETWEEN 2 PRECEDING AND CURRENT ROW\n  ) AS moving_avg_3_days\nFROM Orders;`},
+  {num:22,title:"First & Last Order Date Per Customer",category:"aggregation",complexity:"easy",concepts:"MIN · MAX · GROUP BY",desc:"Find the earliest and most recent order dates per customer using MIN and MAX.",sql:`SELECT customer_id,\n  MIN(order_date) AS first_order,\n  MAX(order_date) AS last_order\nFROM Orders\nGROUP BY customer_id;`},
+  {num:23,title:"Product Sales Distribution (% Revenue)",category:"cte",complexity:"hard",concepts:"CTE · CROSS JOIN · Percent",desc:"Use a CTE to get total revenue, then CROSS JOIN it to compute each product's percentage share.",sql:`WITH TotalRevenue AS (\n  SELECT SUM(quantity * price) AS total\n  FROM Sales\n)\nSELECT s.product_id,\n  SUM(s.quantity * s.price) AS revenue,\n  SUM(s.quantity * s.price) * 100.0\n    / t.total AS revenue_pct\nFROM Sales s\nCROSS JOIN TotalRevenue t\nGROUP BY s.product_id, t.total;`},
+  {num:24,title:"Customers with Consecutive Purchases (2 Days)",category:"cte",complexity:"hard",concepts:"LAG() · CTE · INTERVAL",desc:"Use LAG() to retrieve the previous order date and filter rows where gap is exactly 1 day.",sql:`WITH cte AS (\n  SELECT customer_id, order_date,\n    LAG(order_date) OVER (\n      PARTITION BY customer_id\n      ORDER BY order_date\n    ) AS prev_order_date\n  FROM Orders\n)\nSELECT customer_id, order_date, prev_order_date\nFROM cte\nWHERE order_date - prev_order_date = INTERVAL '1' DAY;`},
+  {num:25,title:"Churned Customers (No Orders in 6 Months)",category:"advanced",complexity:"hard",concepts:"MAX · HAVING · NOW()",desc:"Identify customers whose last order was more than 6 months ago using MAX and date comparison.",sql:`SELECT customer_id\nFROM Orders\nGROUP BY customer_id\nHAVING MAX(order_date) < (NOW() - INTERVAL '6 months');`},
+  {num:26,title:"Cumulative Revenue by Day",category:"window",complexity:"medium",concepts:"SUM() OVER · ORDER BY",desc:"Running total of revenue using SUM() as a window function ordered by date.",sql:`SELECT order_date,\n  SUM(total_amount) OVER (\n    ORDER BY order_date\n  ) AS cumulative_revenue\nFROM Orders;`},
+  {num:27,title:"Top-Performing Departments by Avg Salary",category:"aggregation",complexity:"easy",concepts:"AVG · GROUP BY · ORDER BY",desc:"Rank departments by their average employee salary to identify top-paying teams.",sql:`SELECT department_id,\n  AVG(salary) AS avg_salary\nFROM Employee\nGROUP BY department_id\nORDER BY avg_salary DESC;`},
+  {num:28,title:"Customers Ordered More Than Average Orders",category:"cte",complexity:"medium",concepts:"CTE · AVG Subquery",desc:"Two-step analysis: first compute each customer's order count, then filter those above the fleet average.",sql:`WITH customer_orders AS (\n  SELECT customer_id,\n    COUNT(*) AS order_count\n  FROM Orders\n  GROUP BY customer_id\n)\nSELECT *\nFROM customer_orders\nWHERE order_count > (\n  SELECT AVG(order_count) FROM customer_orders\n);`},
+  {num:29,title:"Revenue from New Customers (First-Time Orders)",category:"cte",complexity:"hard",concepts:"CTE · JOIN · MIN",desc:"Identify each customer's first-ever order date, then sum revenue from those first orders only.",sql:`WITH first_orders AS (\n  SELECT customer_id,\n    MIN(order_date) AS first_order_date\n  FROM Orders\n  GROUP BY customer_id\n)\nSELECT SUM(o.total_amount) AS new_revenue\nFROM Orders o\nJOIN first_orders f\n  ON o.customer_id = f.customer_id\nWHERE o.order_date = f.first_order_date;`},
+  {num:30,title:"Percentage of Employees in Each Department",category:"aggregation",complexity:"medium",concepts:"COUNT · Percentage · Subquery",desc:"Express department headcount as a percentage of total employees using a scalar subquery.",sql:`SELECT department_id,\n  COUNT(*) AS emp_count,\n  COUNT(*) * 100.0 /\n    (SELECT COUNT(*) FROM Employee) AS pct\nFROM Employee\nGROUP BY department_id;`},
+  {num:31,title:"Maximum Salary Difference Per Department",category:"aggregation",complexity:"medium",concepts:"MAX · MIN · GROUP BY",desc:"Compute the salary spread (max minus min) within each department as a pay equity indicator.",sql:`SELECT department_id,\n  MAX(salary) - MIN(salary) AS salary_diff\nFROM Employee\nGROUP BY department_id;`},
+  {num:32,title:"Products Contributing to 80% Revenue (Pareto)",category:"cte",complexity:"hard",concepts:"CTE · Cumulative % · CROSS JOIN",desc:"Implement the 80/20 Pareto principle — find which products together account for 80% of sales.",sql:`WITH sales_cte AS (\n  SELECT product_id,\n    SUM(quantity * price) AS revenue\n  FROM Sales GROUP BY product_id\n),\ntotal_revenue AS (\n  SELECT SUM(revenue) AS total FROM sales_cte\n),\ncumulative AS (\n  SELECT product_id, revenue,\n    SUM(revenue) OVER (ORDER BY revenue DESC)\n      AS cumulative_revenue,\n    t.total\n  FROM sales_cte CROSS JOIN total_revenue t\n)\nSELECT product_id, revenue, cumulative_revenue\nFROM cumulative\nWHERE cumulative_revenue <= total * 0.80;`},
+  {num:33,title:"Last Purchase for Each Customer with Order Amount",category:"cte",complexity:"medium",concepts:"ROW_NUMBER() · CTE · PARTITION",desc:"Use ROW_NUMBER() partitioned by customer to rank orders by date, then pick the most recent (rn=1).",sql:`WITH ranked_orders AS (\n  SELECT customer_id, order_id, total_amount,\n    ROW_NUMBER() OVER (\n      PARTITION BY customer_id\n      ORDER BY order_date DESC\n    ) AS rn\n  FROM Orders\n)\nSELECT customer_id, order_id, total_amount\nFROM ranked_orders\nWHERE rn = 1;`},
+  {num:34,title:"Average Time Between Two Purchases Per Customer",category:"cte",complexity:"hard",concepts:"LAG() · DATE_DIFF · AVG",desc:"Use LAG() to get the previous order date, then compute and average the day gaps per customer.",sql:`WITH cte AS (\n  SELECT customer_id, order_date,\n    LAG(order_date) OVER (\n      PARTITION BY customer_id\n      ORDER BY order_date\n    ) AS prev_date\n  FROM Orders\n)\nSELECT customer_id,\n  AVG(DATE_DIFF(DAY, prev_date, order_date))\n    AS avg_gap_days\nFROM cte\nWHERE prev_date IS NOT NULL\nGROUP BY customer_id;`},
+  {num:35,title:"Year-over-Year Growth in Revenue",category:"cte",complexity:"hard",concepts:"LAG() · YoY · CTE",desc:"Compute year-over-year revenue change using LAG() to compare the current year vs the previous.",sql:`WITH yearly AS (\n  SELECT EXTRACT(YEAR FROM order_date) AS year,\n    SUM(total_amount) AS revenue\n  FROM Orders\n  GROUP BY EXTRACT(YEAR FROM order_date)\n)\nSELECT year, revenue,\n  revenue - LAG(revenue) OVER (ORDER BY year)\n    AS yoy_growth\nFROM yearly;`},
+  {num:36,title:"Detect Customers Above Historical 90th Percentile",category:"advanced",complexity:"hard",concepts:"NTILE · Percentile · CTE",desc:"Use NTILE(10) window function to bucket customers into deciles, then isolate the top 10%.",sql:`WITH ranked_orders AS (\n  SELECT customer_id, order_id, total_amount,\n    NTILE(10) OVER (\n      PARTITION BY customer_id\n      ORDER BY total_amount\n    ) AS decile\n  FROM Orders\n)\nSELECT customer_id, order_id, total_amount\nFROM ranked_orders\nWHERE decile = 10;`},
+  {num:37,title:"Retrieve Longest Gap Between Orders Per Customer",category:"cte",complexity:"hard",concepts:"LAG() · MAX · DATE_DIFF",desc:"Find the maximum gap in days between any two consecutive orders per customer using LAG and DATE_DIFF.",sql:`WITH cte AS (\n  SELECT customer_id, order_date,\n    LAG(order_date) OVER (\n      PARTITION BY customer_id\n      ORDER BY order_date\n    ) AS prev_order_date\n  FROM Orders\n)\nSELECT customer_id,\n  MAX(DATE_DIFF(DAY, prev_order_date, order_date))\n    AS max_gap_days\nFROM cte\nWHERE prev_order_date IS NOT NULL\nGROUP BY customer_id;`},
+  {num:38,title:"Identify Customers Below 10th Percentile Revenue",category:"advanced",complexity:"hard",concepts:"PERCENTILE_CONT · CTE",desc:"Use PERCENTILE_CONT(0.1) to find customers whose total revenue falls below the 10th percentile.",sql:`WITH cte AS (\n  SELECT customer_id,\n    SUM(total_amount) AS total_revenue\n  FROM Orders\n  GROUP BY customer_id\n)\nSELECT customer_id, total_revenue\nFROM cte\nWHERE total_revenue < (\n  SELECT PERCENTILE_CONT(0.1)\n    WITHIN GROUP (ORDER BY total_revenue)\n  FROM cte\n);`},
+  {num:39,title:"Find Nth Highest Salary (Generic)",category:"window",complexity:"medium",concepts:"DENSE_RANK() · CTE",desc:"Use DENSE_RANK() to generically find the Nth highest salary — works for any N without nested subqueries.",sql:`WITH ranked AS (\n  SELECT salary,\n    DENSE_RANK() OVER (ORDER BY salary DESC)\n      AS rnk\n  FROM Employee\n)\nSELECT salary FROM ranked WHERE rnk = 3;`},
+  {num:40,title:"Self Join: Find Employees Earning More Than Manager",category:"joins",complexity:"medium",concepts:"Self JOIN",desc:"Join Employee to itself aliasing as manager to compare an employee's salary against their manager's.",sql:`SELECT e.name AS employee,\n       m.name AS manager\nFROM Employee e\nJOIN Employee m\n  ON e.manager_id = m.employee_id\nWHERE e.salary > m.salary;`},
+  {num:41,title:"Running Total of Orders Per Customer",category:"window",complexity:"medium",concepts:"SUM() OVER · PARTITION BY",desc:"Compute a per-customer running total of order amounts, resetting for each new customer.",sql:`SELECT customer_id, order_date, total_amount,\n  SUM(total_amount) OVER (\n    PARTITION BY customer_id\n    ORDER BY order_date\n  ) AS running_total\nFROM Orders;`},
+  {num:42,title:"Customers with Exactly One Order",category:"aggregation",complexity:"easy",concepts:"HAVING · COUNT",desc:"Filter for customers who placed exactly one order — useful for one-time buyer analysis.",sql:`SELECT customer_id\nFROM Orders\nGROUP BY customer_id\nHAVING COUNT(*) = 1;`},
+  {num:43,title:"Find All Pairs of Employees in Same Department",category:"joins",complexity:"medium",concepts:"Self JOIN · <>",desc:"Self-join to produce all unique pairs of employees sharing the same department.",sql:`SELECT a.name AS emp1, b.name AS emp2,\n       a.department_id\nFROM Employee a\nJOIN Employee b\n  ON a.department_id = b.department_id\n  AND a.employee_id < b.employee_id;`},
+  {num:44,title:"Products Sold in All Regions",category:"advanced",complexity:"hard",concepts:"COUNT DISTINCT · HAVING",desc:"Find products that appear in every distinct region by comparing sold-region count to total regions.",sql:`SELECT product_id\nFROM Sales s\nJOIN Orders o ON s.sale_id = o.order_id\nGROUP BY product_id\nHAVING COUNT(DISTINCT region) =\n  (SELECT COUNT(DISTINCT region) FROM Orders);`},
+  {num:45,title:"Employees with Above-Average Salary in Department",category:"window",complexity:"medium",concepts:"AVG() OVER · PARTITION BY",desc:"Use AVG() as a window function partitioned by department to compare each salary against its department average.",sql:`SELECT employee_id, name, department_id, salary\nFROM (\n  SELECT *,\n    AVG(salary) OVER (\n      PARTITION BY department_id\n    ) AS dept_avg\n  FROM Employee\n) t\nWHERE salary > dept_avg;`},
+  {num:46,title:"CASE Statement: Salary Bands",category:"basics",complexity:"easy",concepts:"CASE WHEN · THEN",desc:"Use CASE to categorize employees into salary bands — a fundamental conditional expression.",sql:`SELECT name, salary,\n  CASE\n    WHEN salary < 50000  THEN 'Junior'\n    WHEN salary < 90000  THEN 'Mid-Level'\n    WHEN salary < 120000 THEN 'Senior'\n    ELSE 'Executive'\n  END AS salary_band\nFROM Employee;`},
+  {num:47,title:"PIVOT: Orders Count by Region and Month",category:"advanced",complexity:"hard",concepts:"CASE · SUM · Pivot",desc:"Manual pivot using conditional aggregation to reshape rows into columns by region.",sql:`SELECT\n  TO_CHAR(order_date,'YYYY-MM') AS month,\n  SUM(CASE WHEN region='North' THEN 1 ELSE 0 END) AS north,\n  SUM(CASE WHEN region='South' THEN 1 ELSE 0 END) AS south,\n  SUM(CASE WHEN region='East'  THEN 1 ELSE 0 END) AS east,\n  SUM(CASE WHEN region='West'  THEN 1 ELSE 0 END) AS west\nFROM Orders\nGROUP BY TO_CHAR(order_date,'YYYY-MM');`},
+  {num:48,title:"String: Extract Domain from Email",category:"string",complexity:"easy",concepts:"SUBSTRING · POSITION",desc:"Parse the domain portion from an email address using SUBSTRING and POSITION/CHARINDEX.",sql:`SELECT email,\n  SUBSTRING(email,\n    POSITION('@' IN email) + 1,\n    LENGTH(email)\n  ) AS domain\nFROM Customers;`},
+  {num:49,title:"String: Concatenate Full Name",category:"string",complexity:"easy",concepts:"CONCAT · ||",desc:"Combine first and last name columns into a single full name using CONCAT or the || operator.",sql:`SELECT CONCAT(first_name, ' ', last_name)\n       AS full_name\nFROM Employee;`},
+  {num:50,title:"String: Find Customers Whose Name Starts with 'A'",category:"string",complexity:"easy",concepts:"LIKE · Pattern",desc:"Filter rows using LIKE with a wildcard — one of the most common string-matching techniques.",sql:`SELECT * FROM Customers\nWHERE name LIKE 'A%';`},
+  {num:51,title:"String: Count Vowels in Product Name",category:"string",complexity:"medium",concepts:"REGEXP_COUNT · LOWER",desc:"Count occurrences of vowels in a string using LENGTH-based trick.",sql:`SELECT product_name,\n  LENGTH(product_name) -\n  LENGTH(REPLACE(LOWER(product_name),'a','')) +\n  LENGTH(product_name) -\n  LENGTH(REPLACE(LOWER(product_name),'e',''))\n  AS approx_vowels\nFROM Products;`},
+  {num:52,title:"Date: Orders Placed in the Last 30 Days",category:"date",complexity:"easy",concepts:"NOW() · INTERVAL",desc:"Filter orders within a rolling 30-day window using NOW() minus an INTERVAL.",sql:`SELECT * FROM Orders\nWHERE order_date >= NOW() - INTERVAL '30 days';`},
+  {num:53,title:"Date: Age of Each Employee",category:"date",complexity:"easy",concepts:"DATE_PART · AGE()",desc:"Calculate employee tenure using AGE() or DATE_PART to subtract hire_date from today.",sql:`SELECT name,\n  DATE_PART('year', AGE(hire_date))\n    AS years_employed\nFROM Employee;`},
+  {num:54,title:"Date: Day of Week with Highest Orders",category:"date",complexity:"medium",concepts:"EXTRACT DOW · COUNT · ORDER BY",desc:"Find which day of the week sees the most orders using EXTRACT(DOW) and GROUP BY.",sql:`SELECT EXTRACT(DOW FROM order_date) AS dow,\n  TO_CHAR(order_date,'Day') AS day_name,\n  COUNT(*) AS order_count\nFROM Orders\nGROUP BY dow, day_name\nORDER BY order_count DESC\nLIMIT 1;`},
+  {num:55,title:"Date: Number of Business Days Between Two Dates",category:"date",complexity:"hard",concepts:"GENERATE_SERIES · DOW filter",desc:"Use GENERATE_SERIES to enumerate each day between two dates and filter out weekends.",sql:`SELECT COUNT(*) AS business_days\nFROM GENERATE_SERIES(\n  '2023-01-01'::DATE,\n  '2023-01-31'::DATE,\n  '1 day'::INTERVAL\n) AS d\nWHERE EXTRACT(DOW FROM d) NOT IN (0, 6);`},
+  {num:56,title:"Subquery: Departments with No Employees",category:"subquery",complexity:"medium",concepts:"NOT EXISTS · Correlated Subquery",desc:"Use NOT EXISTS with a correlated subquery to find departments that have zero employees assigned.",sql:`SELECT dept_name\nFROM Department d\nWHERE NOT EXISTS (\n  SELECT 1 FROM Employee e\n  WHERE e.department_id = d.department_id\n);`},
+  {num:57,title:"Subquery: Orders Where Amount > Region Avg",category:"subquery",complexity:"hard",concepts:"Correlated Subquery",desc:"Correlated subquery — for each order, compare its amount to the average of orders in the same region.",sql:`SELECT order_id, customer_id, total_amount, region\nFROM Orders o\nWHERE total_amount > (\n  SELECT AVG(total_amount)\n  FROM Orders\n  WHERE region = o.region\n);`},
+  {num:58,title:"Subquery: Top Customer Per Region",category:"subquery",complexity:"hard",concepts:"Correlated Subquery · MAX",desc:"Find the highest-spending customer in each region using a correlated subquery with MAX.",sql:`SELECT region, customer_id, total_amount\nFROM Orders o\nWHERE total_amount = (\n  SELECT MAX(total_amount)\n  FROM Orders\n  WHERE region = o.region\n);`},
+  {num:59,title:"EXISTS: Customers Who Placed an Order in 2023",category:"subquery",complexity:"easy",concepts:"EXISTS · Correlated",desc:"Use EXISTS for a semi-join — typically faster than IN for checking membership in a large set.",sql:`SELECT customer_id, name\nFROM Customers c\nWHERE EXISTS (\n  SELECT 1 FROM Orders o\n  WHERE o.customer_id = c.customer_id\n    AND EXTRACT(YEAR FROM o.order_date) = 2023\n);`},
+  {num:60,title:"UNION vs UNION ALL: Combine Two Tables",category:"basics",complexity:"easy",concepts:"UNION · UNION ALL",desc:"UNION removes duplicates; UNION ALL keeps them. Use UNION ALL for performance when duplicates are acceptable.",sql:`-- UNION: distinct rows only\nSELECT customer_id FROM Orders\nUNION\nSELECT customer_id FROM Returns;\n\n-- UNION ALL: keep duplicates\nSELECT customer_id FROM Orders\nUNION ALL\nSELECT customer_id FROM Returns;`},
+  {num:61,title:"INTERSECT: Customers Who Both Ordered and Returned",category:"basics",complexity:"easy",concepts:"INTERSECT",desc:"INTERSECT returns only rows that appear in both result sets — the intersection of two queries.",sql:`SELECT customer_id FROM Orders\nINTERSECT\nSELECT customer_id FROM Returns;`},
+  {num:62,title:"EXCEPT: Customers Who Ordered but Never Returned",category:"basics",complexity:"easy",concepts:"EXCEPT",desc:"EXCEPT returns rows from the first query not present in the second — a set difference operation.",sql:`SELECT customer_id FROM Orders\nEXCEPT\nSELECT customer_id FROM Returns;`},
+  {num:63,title:"NTILE: Divide Employees into Salary Quartiles",category:"window",complexity:"medium",concepts:"NTILE(4) · Window",desc:"NTILE(4) splits rows into 4 equal buckets — perfect for quartile or decile analysis.",sql:`SELECT employee_id, name, salary,\n  NTILE(4) OVER (ORDER BY salary) AS quartile\nFROM Employee;`},
+  {num:64,title:"LEAD: Next Order Date Per Customer",category:"window",complexity:"medium",concepts:"LEAD() · PARTITION BY",desc:"LEAD() looks ahead to the next row in the partition — useful for calculating time-to-next-event.",sql:`SELECT customer_id, order_date,\n  LEAD(order_date) OVER (\n    PARTITION BY customer_id\n    ORDER BY order_date\n  ) AS next_order_date\nFROM Orders;`},
+  {num:65,title:"FIRST_VALUE: First Order Per Customer",category:"window",complexity:"medium",concepts:"FIRST_VALUE() · Window Frame",desc:"FIRST_VALUE retrieves the first row's value in the partition window — great for baseline comparisons.",sql:`SELECT customer_id, order_date, total_amount,\n  FIRST_VALUE(order_date) OVER (\n    PARTITION BY customer_id\n    ORDER BY order_date\n    ROWS BETWEEN UNBOUNDED PRECEDING\n      AND UNBOUNDED FOLLOWING\n  ) AS first_order_date\nFROM Orders;`},
+  {num:66,title:"Recursive CTE: Employee Hierarchy",category:"cte",complexity:"hard",concepts:"Recursive CTE · WITH RECURSIVE",desc:"Build an org-chart tree using a recursive CTE — anchor on the CEO, then recurse through manager_id.",sql:`WITH RECURSIVE org AS (\n  SELECT employee_id, name, manager_id, 1 AS lvl\n  FROM Employee WHERE manager_id IS NULL\n  UNION ALL\n  SELECT e.employee_id, e.name, e.manager_id,\n         o.lvl + 1\n  FROM Employee e\n  JOIN org o ON e.manager_id = o.employee_id\n)\nSELECT * FROM org ORDER BY lvl, name;`},
+  {num:67,title:"Recursive CTE: Generate a Number Series",category:"cte",complexity:"medium",concepts:"Recursive CTE · Series",desc:"Generate a sequence of integers (1 to N) using a recursive CTE when GENERATE_SERIES isn't available.",sql:`WITH RECURSIVE nums AS (\n  SELECT 1 AS n\n  UNION ALL\n  SELECT n + 1 FROM nums WHERE n < 100\n)\nSELECT n FROM nums;`},
+  {num:68,title:"JSON: Extract Field from JSON Column",category:"advanced",complexity:"medium",concepts:"JSON_EXTRACT · ->",desc:"Extract a specific key from a JSON or JSONB column using the -> or JSON_EXTRACT operator.",sql:`-- PostgreSQL JSONB\nSELECT id,\n  metadata->>'city' AS city\nFROM Users;\n\n-- MySQL\nSELECT id,\n  JSON_EXTRACT(metadata, '$.city') AS city\nFROM Users;`},
+  {num:69,title:"COALESCE: Replace NULLs with Default Value",category:"basics",complexity:"easy",concepts:"COALESCE · NULL handling",desc:"COALESCE returns the first non-NULL argument — the standard way to provide default values.",sql:`SELECT employee_id,\n  COALESCE(department_id, 0) AS dept,\n  COALESCE(salary, 0.00) AS salary\nFROM Employee;`},
+  {num:70,title:"NULLIF: Avoid Division by Zero",category:"basics",complexity:"easy",concepts:"NULLIF · Safe Division",desc:"NULLIF(x, y) returns NULL if x=y, preventing division-by-zero errors in ratio calculations.",sql:`SELECT product_id,\n  total_revenue /\n    NULLIF(total_units, 0) AS avg_price\nFROM ProductSummary;`},
+  {num:71,title:"CAST / CONVERT: Change Data Types",category:"basics",complexity:"easy",concepts:"CAST · Type Conversion",desc:"Explicitly convert between data types using CAST — essential when joining or comparing mixed types.",sql:`SELECT order_id,\n  CAST(total_amount AS INT) AS amount_int,\n  CAST(order_date AS VARCHAR) AS date_str\nFROM Orders;`},
+  {num:72,title:"String: UPPER, LOWER, TRIM",category:"string",complexity:"easy",concepts:"UPPER · LOWER · TRIM",desc:"Normalize string data by converting case and removing leading/trailing whitespace.",sql:`SELECT\n  UPPER(name) AS name_upper,\n  LOWER(email) AS email_lower,\n  TRIM(city) AS city_trimmed\nFROM Customers;`},
+  {num:73,title:"String: REPLACE and REGEXP_REPLACE",category:"string",complexity:"medium",concepts:"REPLACE · REGEXP_REPLACE",desc:"Replace substrings using REPLACE for exact matches or REGEXP_REPLACE for pattern-based substitution.",sql:`SELECT product_name,\n  REPLACE(product_name, ' ', '_') AS slug,\n  REGEXP_REPLACE(product_name,\n    '[^a-zA-Z0-9]', '', 'g') AS clean\nFROM Products;`},
+  {num:74,title:"String: Split Name into First and Last",category:"string",complexity:"medium",concepts:"SPLIT_PART · POSITION",desc:"Split a full name string at the space character using SPLIT_PART (PostgreSQL).",sql:`SELECT name,\n  SPLIT_PART(name, ' ', 1) AS first_name,\n  SPLIT_PART(name, ' ', 2) AS last_name\nFROM Customers;`},
+  {num:75,title:"Gaps and Islands: Find Consecutive Order Streaks",category:"advanced",complexity:"hard",concepts:"ROW_NUMBER · Date Gaps",desc:"Classic gaps-and-islands: subtract ROW_NUMBER from date to create group keys for consecutive streaks.",sql:`WITH numbered AS (\n  SELECT customer_id, order_date,\n    order_date - ROW_NUMBER() OVER (\n      PARTITION BY customer_id\n      ORDER BY order_date\n    ) * INTERVAL '1 day' AS grp\n  FROM Orders\n)\nSELECT customer_id, grp,\n  MIN(order_date) AS streak_start,\n  MAX(order_date) AS streak_end,\n  COUNT(*) AS streak_length\nFROM numbered\nGROUP BY customer_id, grp;`},
+  {num:76,title:"Median Salary Per Department",category:"window",complexity:"hard",concepts:"PERCENTILE_CONT · Median",desc:"Calculate the median salary in each department using PERCENTILE_CONT(0.5) — the 50th percentile.",sql:`SELECT department_id,\n  PERCENTILE_CONT(0.5) WITHIN GROUP (\n    ORDER BY salary\n  ) AS median_salary\nFROM Employee\nGROUP BY department_id;`},
+  {num:77,title:"Standard Deviation of Order Amounts",category:"aggregation",complexity:"medium",concepts:"STDDEV · Variance",desc:"Use STDDEV_POP or STDDEV_SAMP to measure the spread of order values — useful for anomaly detection.",sql:`SELECT region,\n  ROUND(AVG(total_amount), 2) AS avg_order,\n  ROUND(STDDEV(total_amount), 2) AS std_dev,\n  ROUND(VARIANCE(total_amount), 2) AS variance\nFROM Orders\nGROUP BY region;`},
+  {num:78,title:"Window: Percent of Total Per Department",category:"window",complexity:"medium",concepts:"SUM() OVER · Ratio",desc:"Compute each employee's salary as a percentage of their department's total payroll using SUM() OVER.",sql:`SELECT name, department_id, salary,\n  ROUND(salary * 100.0 /\n    SUM(salary) OVER (\n      PARTITION BY department_id\n    ), 2) AS pct_of_dept\nFROM Employee;`},
+  {num:79,title:"Detect Fraudulent Back-to-Back Orders",category:"advanced",complexity:"hard",concepts:"LAG · TIMESTAMPDIFF",desc:"Flag orders placed within 5 minutes of the previous order from the same customer — potential fraud signal.",sql:`WITH gaps AS (\n  SELECT order_id, customer_id, order_date,\n    LAG(order_date) OVER (\n      PARTITION BY customer_id\n      ORDER BY order_date\n    ) AS prev_order\n  FROM Orders\n)\nSELECT * FROM gaps\nWHERE order_date - prev_order < INTERVAL '5 minutes';`},
+  {num:80,title:"Pivot: Product Revenue by Quarter",category:"advanced",complexity:"hard",concepts:"CASE · EXTRACT · Pivot",desc:"Pivot annual product sales into Q1–Q4 columns using conditional aggregation with CASE and EXTRACT.",sql:`SELECT product_id,\n  SUM(CASE WHEN EXTRACT(QUARTER FROM sale_date)=1\n      THEN quantity*price ELSE 0 END) AS Q1,\n  SUM(CASE WHEN EXTRACT(QUARTER FROM sale_date)=2\n      THEN quantity*price ELSE 0 END) AS Q2,\n  SUM(CASE WHEN EXTRACT(QUARTER FROM sale_date)=3\n      THEN quantity*price ELSE 0 END) AS Q3,\n  SUM(CASE WHEN EXTRACT(QUARTER FROM sale_date)=4\n      THEN quantity*price ELSE 0 END) AS Q4\nFROM Sales\nGROUP BY product_id;`},
+  {num:81,title:"CTE: Month-over-Month Revenue Change",category:"cte",complexity:"hard",concepts:"CTE · LAG · MoM",desc:"Compare each month's revenue to the prior month using LAG() over monthly aggregations inside a CTE.",sql:`WITH monthly AS (\n  SELECT DATE_TRUNC('month', order_date) AS mo,\n    SUM(total_amount) AS revenue\n  FROM Orders GROUP BY mo\n)\nSELECT mo, revenue,\n  revenue - LAG(revenue) OVER (ORDER BY mo)\n    AS mom_change\nFROM monthly;`},
+  {num:82,title:"Find Duplicate Emails in Customers Table",category:"basics",complexity:"easy",concepts:"GROUP BY · HAVING · COUNT",desc:"Detect duplicate emails — common data-cleaning task before applying a UNIQUE constraint.",sql:`SELECT email, COUNT(*) AS cnt\nFROM Customers\nGROUP BY email\nHAVING COUNT(*) > 1\nORDER BY cnt DESC;`},
+  {num:83,title:"Delete Duplicate Rows Keeping Latest",category:"advanced",complexity:"hard",concepts:"CTE · ROW_NUMBER · DELETE",desc:"Use a CTE with ROW_NUMBER to identify and delete all but the most recent duplicate row.",sql:`WITH dupes AS (\n  SELECT ctid,\n    ROW_NUMBER() OVER (\n      PARTITION BY email\n      ORDER BY customer_id DESC\n    ) AS rn\n  FROM Customers\n)\nDELETE FROM Customers\nWHERE ctid IN (\n  SELECT ctid FROM dupes WHERE rn > 1\n);`},
+  {num:84,title:"UPDATE with JOIN: Apply Discount to Top Products",category:"advanced",complexity:"medium",concepts:"UPDATE · JOIN · Subquery",desc:"Update a price column using a subquery to target only rows meeting a complex condition.",sql:`UPDATE Products p\nSET price = price * 0.90\nWHERE product_id IN (\n  SELECT product_id FROM Sales\n  GROUP BY product_id\n  HAVING SUM(quantity) > 100\n);`},
+  {num:85,title:"INSERT INTO SELECT: Archive Old Orders",category:"advanced",complexity:"easy",concepts:"INSERT INTO SELECT",desc:"Copy rows from one table to another using INSERT INTO ... SELECT — common for archival workflows.",sql:`INSERT INTO Orders_Archive\nSELECT * FROM Orders\nWHERE order_date < '2022-01-01';`},
+  {num:86,title:"CREATE INDEX: Speed Up Order Date Lookups",category:"advanced",complexity:"easy",concepts:"CREATE INDEX · Performance",desc:"Indexes dramatically speed up range and equality queries on large tables by avoiding full scans.",sql:`-- Single-column index\nCREATE INDEX idx_orders_date\n  ON Orders (order_date);\n\n-- Composite index\nCREATE INDEX idx_orders_cust_date\n  ON Orders (customer_id, order_date);`},
+  {num:87,title:"Window: Difference from Previous Row (Delta)",category:"window",complexity:"medium",concepts:"LAG · Arithmetic",desc:"Compute the day-over-day revenue delta using LAG() subtraction — common in time-series dashboards.",sql:`SELECT order_date,\n  SUM(total_amount) AS daily_rev,\n  SUM(total_amount) -\n    LAG(SUM(total_amount)) OVER (\n      ORDER BY order_date\n    ) AS delta\nFROM Orders\nGROUP BY order_date;`},
+  {num:88,title:"Conditional Aggregation: Active vs Inactive Customers",category:"aggregation",complexity:"medium",concepts:"SUM(CASE) · Conditional",desc:"Classify customers as active (ordered in last 90 days) or inactive using SUM(CASE WHEN ...).",sql:`SELECT\n  SUM(CASE WHEN MAX(order_date) >=\n      NOW() - INTERVAL '90 days'\n    THEN 1 ELSE 0 END) AS active,\n  SUM(CASE WHEN MAX(order_date) <\n      NOW() - INTERVAL '90 days'\n    THEN 1 ELSE 0 END) AS inactive\nFROM Orders\nGROUP BY customer_id;`},
+  {num:89,title:"CTE: Customer Lifetime Value (LTV)",category:"cte",complexity:"medium",concepts:"CTE · SUM · AVG",desc:"Compute total spend, order count, and average order value per customer as a simple LTV model.",sql:`WITH ltv AS (\n  SELECT customer_id,\n    COUNT(*) AS total_orders,\n    SUM(total_amount) AS total_spent,\n    AVG(total_amount) AS avg_order\n  FROM Orders\n  GROUP BY customer_id\n)\nSELECT *, total_spent / total_orders AS ltv\nFROM ltv\nORDER BY ltv DESC;`},
+  {num:90,title:"Find Missing IDs in a Sequence",category:"advanced",complexity:"hard",concepts:"GENERATE_SERIES · LEFT JOIN",desc:"Generate a full integer sequence and LEFT JOIN to find gaps — IDs present in the sequence but not the table.",sql:`SELECT s.n AS missing_id\nFROM GENERATE_SERIES(1, 1000) AS s(n)\nLEFT JOIN Orders o ON s.n = o.order_id\nWHERE o.order_id IS NULL;`},
+  {num:91,title:"String: LPAD / RPAD for Fixed-Width Output",category:"string",complexity:"easy",concepts:"LPAD · RPAD",desc:"Pad strings to a fixed width with a fill character — useful for generating formatted reports or IDs.",sql:`SELECT\n  LPAD(order_id::TEXT, 8, '0') AS padded_id,\n  RPAD(name, 20, '.') AS formatted_name\nFROM Orders\nJOIN Customers USING (customer_id);`},
+  {num:92,title:"String: Count Words in a Description",category:"string",complexity:"medium",concepts:"ARRAY_LENGTH · STRING_TO_ARRAY",desc:"Split a sentence into words using STRING_TO_ARRAY and count the resulting array length.",sql:`SELECT product_name,\n  ARRAY_LENGTH(\n    STRING_TO_ARRAY(TRIM(product_name), ' '),\n    1\n  ) AS word_count\nFROM Products;`},
+  {num:93,title:"Date: Quarter-to-Date Revenue",category:"date",complexity:"medium",concepts:"DATE_TRUNC · QUARTER",desc:"Aggregate revenue from the start of the current quarter to today using DATE_TRUNC('quarter').",sql:`SELECT SUM(total_amount) AS qtd_revenue\nFROM Orders\nWHERE order_date >= DATE_TRUNC(\n  'quarter', CURRENT_DATE\n);`},
+  {num:94,title:"Date: Last Day of Each Month",category:"date",complexity:"medium",concepts:"DATE_TRUNC · LAST_DAY",desc:"Calculate the last day of each month using DATE_TRUNC to get month start, then subtract 1 day.",sql:`SELECT DISTINCT\n  DATE_TRUNC('month', order_date)\n    + INTERVAL '1 month' - INTERVAL '1 day'\n    AS last_day_of_month\nFROM Orders\nORDER BY 1;`},
+  {num:95,title:"Subquery: Products Above Category Revenue Average",category:"subquery",complexity:"hard",concepts:"Correlated Subquery · Category",desc:"For each product find if its revenue is above the average of all products in the same category.",sql:`SELECT p.product_id, p.product_name,\n       p.category,\n       SUM(s.quantity * s.price) AS revenue\nFROM Products p\nJOIN Sales s USING (product_id)\nGROUP BY p.product_id, p.product_name, p.category\nHAVING SUM(s.quantity * s.price) > (\n  SELECT AVG(total_cat)\n  FROM (\n    SELECT SUM(s2.quantity * s2.price) AS total_cat\n    FROM Products p2\n    JOIN Sales s2 USING (product_id)\n    WHERE p2.category = p.category\n    GROUP BY p2.product_id\n  ) sub\n);`},
+  {num:96,title:"Window: Salary Percentile Rank",category:"window",complexity:"medium",concepts:"PERCENT_RANK() · CUME_DIST()",desc:"PERCENT_RANK gives the relative rank (0 to 1); CUME_DIST gives the cumulative distribution fraction.",sql:`SELECT name, salary,\n  ROUND(PERCENT_RANK() OVER (\n    ORDER BY salary\n  )::NUMERIC * 100, 1) AS pct_rank,\n  ROUND(CUME_DIST() OVER (\n    ORDER BY salary\n  )::NUMERIC * 100, 1) AS cume_dist\nFROM Employee;`},
+  {num:97,title:"FULL OUTER JOIN: All Customers and Orders",category:"joins",complexity:"medium",concepts:"FULL OUTER JOIN",desc:"FULL OUTER JOIN returns all rows from both tables — matching rows joined, non-matching rows as NULLs.",sql:`SELECT c.customer_id, c.name,\n       o.order_id, o.total_amount\nFROM Customers c\nFULL OUTER JOIN Orders o\n  ON c.customer_id = o.customer_id;`},
+  {num:98,title:"CROSS JOIN: Generate All Product-Region Combos",category:"joins",complexity:"easy",concepts:"CROSS JOIN · Cartesian",desc:"CROSS JOIN produces the Cartesian product — every combination of rows from both tables.",sql:`SELECT p.product_name, r.region\nFROM Products p\nCROSS JOIN (\n  SELECT DISTINCT region FROM Orders\n) r;`},
+  {num:99,title:"CTE: Identify VIP Customers (Top 10% by Spend)",category:"cte",complexity:"hard",concepts:"CTE · NTILE · Top %",desc:"Use NTILE(10) to bucket customers by total spend, then label the top decile as VIP.",sql:`WITH spend AS (\n  SELECT customer_id,\n    SUM(total_amount) AS total_spent\n  FROM Orders GROUP BY customer_id\n),\nranked AS (\n  SELECT *,\n    NTILE(10) OVER (ORDER BY total_spent DESC)\n      AS decile\n  FROM spend\n)\nSELECT customer_id, total_spent, 'VIP' AS tier\nFROM ranked WHERE decile = 1;`},
+  {num:100,title:"Explain Plan: Analyze a Slow Query",category:"advanced",complexity:"medium",concepts:"EXPLAIN · ANALYZE · Performance",desc:"Use EXPLAIN ANALYZE to view the query execution plan, identify Seq Scans, and optimize with indexes.",sql:`EXPLAIN ANALYZE\nSELECT c.name, SUM(o.total_amount) AS revenue\nFROM Customers c\nJOIN Orders o ON c.customer_id = o.customer_id\nWHERE o.order_date >= '2023-01-01'\nGROUP BY c.name\nORDER BY revenue DESC;\n\n-- Seq Scan → add Index\n-- High rows estimate error → ANALYZE`},
+  {num:101,title:"Window: 7-Day Rolling Revenue",category:"window",complexity:"hard",concepts:"SUM OVER · RANGE INTERVAL",desc:"Compute a 7-day rolling sum of revenue using RANGE BETWEEN with an INTERVAL.",sql:`SELECT order_date,\n  SUM(total_amount) AS daily_rev,\n  SUM(SUM(total_amount)) OVER (\n    ORDER BY order_date\n    RANGE BETWEEN INTERVAL '6 days' PRECEDING\n      AND CURRENT ROW\n  ) AS rolling_7d\nFROM Orders\nGROUP BY order_date;`},
+  {num:102,title:"SCD Type 2: Track Price History",category:"advanced",complexity:"hard",concepts:"SCD Type 2 · Valid From/To",desc:"SCD Type 2 pattern: store historical price changes with valid_from and valid_to dates per product.",sql:`CREATE TABLE ProductPriceHistory (\n  id          SERIAL PRIMARY KEY,\n  product_id  INT,\n  price       DECIMAL(10,2),\n  valid_from  DATE NOT NULL,\n  valid_to    DATE,\n  is_current  BOOLEAN DEFAULT TRUE\n);\n\nUPDATE ProductPriceHistory\nSET valid_to = CURRENT_DATE, is_current = FALSE\nWHERE product_id = 1 AND is_current = TRUE;\n\nINSERT INTO ProductPriceHistory\n(product_id, price, valid_from, is_current)\nVALUES (1, 1399.99, CURRENT_DATE, TRUE);`},
+  {num:103,title:"Upsert: INSERT ON CONFLICT DO UPDATE",category:"advanced",complexity:"medium",concepts:"UPSERT · ON CONFLICT",desc:"INSERT ... ON CONFLICT handles duplicate key violations gracefully — insert or update in one statement.",sql:`INSERT INTO Products\n  (product_id, product_name, price)\nVALUES\n  (1, 'Laptop Pro', 1349.99)\nON CONFLICT (product_id)\nDO UPDATE SET\n  price = EXCLUDED.price,\n  product_name = EXCLUDED.product_name;`},
+  {num:104,title:"Materialized View: Precompute Monthly Revenue",category:"advanced",complexity:"medium",concepts:"Materialized View · REFRESH",desc:"Materialized views store the query result on disk — trade staleness for query speed on heavy aggregations.",sql:`CREATE MATERIALIZED VIEW monthly_revenue AS\nSELECT DATE_TRUNC('month', order_date) AS mo,\n  SUM(total_amount) AS revenue,\n  COUNT(*) AS order_count\nFROM Orders\nGROUP BY mo;\n\n-- Refresh manually:\nREFRESH MATERIALIZED VIEW monthly_revenue;`},
+  {num:105,title:"Window: Compare Current vs Previous Year Same Month",category:"window",complexity:"hard",concepts:"LAG · DATE_TRUNC · YoY Monthly",desc:"Compare each month's revenue with the same month one year prior using LAG with an offset of 12.",sql:`WITH monthly AS (\n  SELECT DATE_TRUNC('month', order_date) AS mo,\n    SUM(total_amount) AS rev\n  FROM Orders GROUP BY mo\n)\nSELECT mo, rev,\n  LAG(rev, 12) OVER (ORDER BY mo) AS prev_yr_rev,\n  rev - LAG(rev, 12) OVER (ORDER BY mo) AS yoy\nFROM monthly;`}
+];
+
+/* ── Syntax Highlighter ── */
+function highlight(sql) {
+  const kws = ['SELECT','FROM','WHERE','JOIN','LEFT JOIN','RIGHT JOIN','INNER JOIN','FULL OUTER JOIN','CROSS JOIN','GROUP BY','ORDER BY','HAVING','INSERT INTO','CREATE TABLE','CREATE INDEX','CREATE MATERIALIZED VIEW','REFRESH MATERIALIZED VIEW','VALUES','UPDATE','SET','DELETE FROM','WITH RECURSIVE','WITH','UNION ALL','UNION','INTERSECT','EXCEPT','AS','ON','AND','OR','NOT IN','NOT EXISTS','EXISTS','IN','IS NULL','IS NOT NULL','BETWEEN','DISTINCT','LIMIT','OFFSET','PARTITION BY','OVER','ROWS BETWEEN','RANGE BETWEEN','CURRENT ROW','UNBOUNDED PRECEDING','UNBOUNDED FOLLOWING','PRECEDING','FOLLOWING','PRIMARY KEY','REFERENCES','NOT NULL','NULL','SERIAL','DEFAULT','BOOLEAN','DO UPDATE SET','ON CONFLICT','EXCLUDED','WITHIN GROUP'];
+  const fns = ['COUNT','SUM','AVG','MAX','MIN','RANK','ROW_NUMBER','DENSE_RANK','LAG','LEAD','NTILE','EXTRACT','TO_CHAR','DATE_DIFF','DATE_TRUNC','DATE_PART','NOW','CURRENT_DATE','INTERVAL','COALESCE','NULLIF','CAST','CONVERT','PERCENTILE_CONT','STDDEV','VARIANCE','PERCENT_RANK','CUME_DIST','FIRST_VALUE','LAST_VALUE','GENERATE_SERIES','SUBSTRING','POSITION','LENGTH','REPLACE','REGEXP_REPLACE','SPLIT_PART','CONCAT','UPPER','LOWER','TRIM','LPAD','RPAD','ARRAY_LENGTH','STRING_TO_ARRAY','AGE','JSON_EXTRACT','ROUND','EXPLAIN','ANALYZE'];
+  let out = sql.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  out = out.replace(/('(?:[^'\\]|\\.)*')/g,'<span class="str">$1</span>');
+  out = out.replace(/\b(\d+(?:\.\d+)?)\b/g,'<span class="num">$1</span>');
+  fns.forEach(f => { out = out.replace(new RegExp(`\\b(${f})\\b`,'g'),'<span class="fn">$1</span>'); });
+  const kwSorted = [...kws].sort((a,b)=>b.length-a.length);
+  kwSorted.forEach(k => { out = out.replace(new RegExp(`\\b(${k.replace(/ /g,'\\s+')})\\b`,'gi'),'<span class="kw">$1</span>'); });
+  return out;
+}
+
+/* ── Build Cards ── */
+function buildCards() {
+  const grid = document.getElementById('cardsGrid');
+  questions.forEach((q, i) => {
+    const accent = ACCENT_MAP[q.category] || '#38bdf8';
+    const glow   = GLOW_MAP[q.category]   || 'rgba(56,189,248,.06)';
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.dataset.category = q.category;
+    card.dataset.title = q.title.toLowerCase();
+    card.style.cssText = `--card-accent:${accent};--card-glow:${glow};animation-delay:${i*0.035}s`;
+    card.innerHTML = `
+      <div class="q-card-header">
+        <div class="q-num">${String(q.num).padStart(2,'0')}</div>
+        <div class="q-info">
+          <div class="q-title">${q.title}</div>
+          <span class="q-tag" style="color:${accent};border:1px solid ${accent}33;background:${accent}10">${q.category.toUpperCase()}</span>
+        </div>
+      </div>
+      <div class="q-desc">${q.desc}</div>
+      <div class="q-code">
+        <div class="q-code-header">
+          <span class="q-code-lang">SQL</span>
+          <button class="q-copy-btn" data-idx="${i}">
+            ${COPY_SVG} Copy
+          </button>
+        </div>
+        <pre>${highlight(q.sql)}</pre>
+      </div>
+      <div class="q-card-footer">
+        <span class="complexity ${q.complexity}">${q.complexity}</span>
+        <span class="concepts">${q.concepts}</span>
+      </div>`;
+    grid.appendChild(card);
+  });
+  updateCount();
+}
+
+/* ── Filter / Search ── */
+function filterCards(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.q-card').forEach(c => {
+    c.classList.toggle('hidden', cat !== 'all' && c.dataset.category !== cat);
+  });
+  updateCount();
+}
+
+function searchCards() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.q-card').forEach(c => {
+    c.classList.toggle('hidden', !c.dataset.title.includes(q) && !c.innerText.toLowerCase().includes(q));
+  });
+  updateCount();
+}
+
+function updateCount() {
+  const vis = document.querySelectorAll('.q-card:not(.hidden)').length;
+  document.getElementById('resultCount').textContent = `Showing ${vis} of ${questions.length} questions`;
+}
+
+/* ── Toast helper ── */
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+/* ── Copy: setup blocks ── */
+function copySetup(id, btn) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = `${CHECK_SVG} Copied!`;
+    setTimeout(() => { btn.innerHTML = orig; }, 1800);
+    showToast();
+  });
+}
+
+/* ── Copy: question cards ── */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.q-copy-btn');
+  if (!btn) return;
+  const idx = parseInt(btn.dataset.idx);
+  navigator.clipboard.writeText(questions[idx].sql).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = `${CHECK_SVG} Copied!`;
+    btn.style.color = 'var(--accent4)';
+    btn.style.borderColor = 'var(--accent4)';
+    setTimeout(() => {
+      btn.innerHTML = orig;
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 1800);
+    showToast();
+  });
+});
+
+buildCards();
+</script>
+</body>
+</html>
